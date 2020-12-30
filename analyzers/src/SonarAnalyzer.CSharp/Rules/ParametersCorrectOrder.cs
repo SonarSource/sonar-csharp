@@ -35,6 +35,16 @@ namespace SonarAnalyzer.Rules.CSharp
     {
         private static readonly DiagnosticDescriptor rule =
             DiagnosticDescriptorBuilder.GetDescriptor(DiagnosticId, MessageFormat, RspecStrings.ResourceManager);
+
+        private static SyntaxToken? GetExpressionSyntaxIdentifier(ExpressionSyntax expressionSyntax) =>
+            expressionSyntax switch
+            {
+                IdentifierNameSyntax identifierNameSyntax => identifierNameSyntax.Identifier,
+                MemberAccessExpressionSyntax memberAccessExpressionSyntax => GetExpressionSyntaxIdentifier(memberAccessExpressionSyntax.Expression),
+                CastExpressionSyntax castExpressionSyntax => GetExpressionSyntaxIdentifier(castExpressionSyntax.Expression),
+                _ => null
+            };
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(rule);
 
         protected override void Initialize(SonarAnalysisContext context)
@@ -87,8 +97,7 @@ namespace SonarAnalyzer.Rules.CSharp
         protected override Location GetMethodDeclarationIdentifierLocation(SyntaxNode syntaxNode) =>
             (syntaxNode as BaseMethodDeclarationSyntax)?.FindIdentifierLocation();
 
-        protected override SyntaxToken? GetArgumentIdentifier(ArgumentSyntax argument) =>
-            (argument.Expression as IdentifierNameSyntax)?.Identifier;
+        protected override SyntaxToken? GetArgumentIdentifier(ArgumentSyntax argument) => GetExpressionSyntaxIdentifier(argument?.Expression);
 
         protected override SyntaxToken? GetNameColonArgumentIdentifier(ArgumentSyntax argument) =>
             argument.NameColon?.Name.Identifier;
