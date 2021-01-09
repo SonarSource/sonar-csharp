@@ -36,15 +36,6 @@ namespace SonarAnalyzer.Rules.CSharp
         private static readonly DiagnosticDescriptor rule =
             DiagnosticDescriptorBuilder.GetDescriptor(DiagnosticId, MessageFormat, RspecStrings.ResourceManager);
 
-        private static SyntaxToken? GetExpressionSyntaxIdentifier(ExpressionSyntax expressionSyntax) =>
-            expressionSyntax switch
-            {
-                IdentifierNameSyntax identifierNameSyntax => identifierNameSyntax.Identifier,
-                MemberAccessExpressionSyntax memberAccessExpressionSyntax => GetExpressionSyntaxIdentifier(memberAccessExpressionSyntax.Expression),
-                CastExpressionSyntax castExpressionSyntax => GetExpressionSyntaxIdentifier(castExpressionSyntax.Expression),
-                _ => null
-            };
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(rule);
 
         protected override void Initialize(SonarAnalysisContext context)
@@ -101,5 +92,20 @@ namespace SonarAnalyzer.Rules.CSharp
 
         protected override SyntaxToken? GetNameColonArgumentIdentifier(ArgumentSyntax argument) =>
             argument.NameColon?.Name.Identifier;
+
+        private static SyntaxToken? GetExpressionSyntaxIdentifier(ExpressionSyntax expression) =>
+            expression switch
+            {
+                IdentifierNameSyntax identifier => identifier.Identifier,
+                MemberAccessExpressionSyntax memberAccess => GetValueAccessIdentifier(memberAccess),
+                CastExpressionSyntax cast => GetExpressionSyntaxIdentifier(cast.Expression),
+                ParenthesizedExpressionSyntax parentheses => GetExpressionSyntaxIdentifier(parentheses.Expression),
+                _ => null
+            };
+
+        private static SyntaxToken? GetValueAccessIdentifier(MemberAccessExpressionSyntax expression) =>
+            expression.Name.ToString() == "Value"
+                ? GetExpressionSyntaxIdentifier(expression.Expression)
+                : expression.Name.Identifier;
     }
 }
