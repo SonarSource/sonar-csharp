@@ -19,21 +19,21 @@
  */
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using SonarAnalyzer.Common;
 using SonarAnalyzer.Helpers;
 
-namespace SonarAnalyzer.Rules.CSharp
+namespace SonarAnalyzer.Rules.VisualBasic
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [DiagnosticAnalyzer(LanguageNames.VisualBasic)]
     [Rule(DiagnosticId)]
     public sealed class NewGuidShouldNotBeUsed : NewGuidShouldNotBeUsedBase<SyntaxKind>
     {
-        protected override ILanguageFacade<SyntaxKind> Language => CSharpFacade.Instance;
+        protected override ILanguageFacade<SyntaxKind> Language => VisualBasicFacade.Instance;
 
         protected override int? ConstructorArgumentListCount(SyntaxNode node) =>
-             (node as ObjectCreationExpressionSyntax)?.ArgumentList?.Arguments.Count;
+            (node as ObjectCreationExpressionSyntax)?.ArgumentList?.Arguments.Count;
     }
 }
