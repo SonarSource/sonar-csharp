@@ -33,7 +33,7 @@ namespace SonarAnalyzer.Rules.VisualBasic
     {
         protected override ILanguageFacade<SyntaxKind> Language => VisualBasicFacade.Instance;
 
-        protected override int? ConstructorArgumentListCount(SyntaxNode node) =>
-            ((ObjectCreationExpressionSyntax)c.Node).ArgumentList?.Arguments.Count
+        protected override int ConstructorArgumentListCount(SyntaxNode node) =>
+            ((ObjectCreationExpressionSyntax)node).ArgumentList?.Arguments.Count ?? 0;
     }
 }

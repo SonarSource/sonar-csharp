@@ -29,17 +29,17 @@ namespace SonarAnalyzer.Rules
     public abstract class NewGuidShouldNotBeUsedBase<TSyntaxKind> : SonarDiagnosticAnalyzer
         where TSyntaxKind : struct
     {
-        internal const string DiagnosticId = "S4581";
+        protected const string DiagnosticId = "S4581";
         private const string MessageFormat = "Use 'Guid.NewGuid()' or 'Guid.Empty' or add arguments to this Guid instantiation.";
 
         private readonly DiagnosticDescriptor rule;
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(rule);
 
+        protected abstract ILanguageFacade<TSyntaxKind> Language { get; }
+
         protected NewGuidShouldNotBeUsedBase() =>
             rule = DiagnosticDescriptorBuilder.GetDescriptor(DiagnosticId, MessageFormat, Language.RspecResources);
-
-        protected abstract ILanguageFacade<TSyntaxKind> Language { get; }
 
         protected override void Initialize(SonarAnalysisContext context) =>
             context.RegisterSyntaxNodeActionInNonGenerated(
@@ -55,6 +55,6 @@ namespace SonarAnalyzer.Rules
                 },
                 Language.SyntaxKind.ObjectCreationExpression);
 
-        protected abstract int? ConstructorArgumentListCount(SyntaxNode node);
+        protected abstract int ConstructorArgumentListCount(SyntaxNode node);
     }
 }
