@@ -34,6 +34,6 @@ namespace SonarAnalyzer.Rules.CSharp
         protected override ILanguageFacade<SyntaxKind> Language => CSharpFacade.Instance;
 
         protected override int? ConstructorArgumentListCount(SyntaxNode node) =>
-             (node as ObjectCreationExpressionSyntax)?.ArgumentList?.Arguments.Count;
+            ((ObjectCreationExpressionSyntax)c.Node).ArgumentList?.Arguments.Count
     }
 }
