@@ -41,7 +41,8 @@ namespace SonarAnalyzer.Rules
         protected NewGuidShouldNotBeUsedBase() =>
             rule = DiagnosticDescriptorBuilder.GetDescriptor(DiagnosticId, MessageFormat, Language.RspecResources);
 
-        protected override void Initialize(SonarAnalysisContext context) =>
+        protected override void Initialize(SonarAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionInNonGenerated(
                 Language.GeneratedCodeRecognizer,
                 c =>
@@ -54,6 +55,21 @@ namespace SonarAnalyzer.Rules
                     }
                 },
                 Language.SyntaxKind.ObjectCreationExpression);
+
+            context.RegisterSyntaxNodeActionInNonGenerated(
+                Language.GeneratedCodeRecognizer,
+                c =>
+                {
+                    var node = c.Node;
+                    if (ConstructorArgumentListCount(c.Node) == 0
+                        && c.SemanticModel.GetSymbolInfo(c.Node).Symbol is IMethodSymbol methodSymbol
+                        && methodSymbol.ContainingType.Is(KnownType.System_Guid))
+                    {
+                        c.ReportDiagnosticWhenActive(Diagnostic.Create(rule, c.Node.GetLocation()));
+                    }
+                },
+                Language.SyntaxKind.DefaultExpression);
+        }
 
         protected abstract int ConstructorArgumentListCount(SyntaxNode node);
     }

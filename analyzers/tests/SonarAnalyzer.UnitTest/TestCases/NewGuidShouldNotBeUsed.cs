@@ -4,10 +4,13 @@ namespace Tests.Diagnostics
 {
     public class Program
     {
+        private static readonly Guid empty;
+
         public void DefaultInitalization()
         {
             Guid default_value = default; // Noncompliant
             var default_T_value = default(Guid); // Noncompliant
+            var default_empty = empty; // 
         }
 
         public void WithoutArguments()
