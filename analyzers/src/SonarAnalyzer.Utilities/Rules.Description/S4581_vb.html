@@ -7,20 +7,17 @@
 <p>This rule raises an issue when a parameterless instantiation of the <code>Guid</code> struct is found.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
-public void Foo()
-{
-    var g = new Guid(); // Noncompliant - what's the intent?
-    var guid = default(Guid);
-    Guid other = default;
-}
+Public Sub Foo()
+    Dim G As New Guid   ' Noncompliant - what's the intent?
+End Sub
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
 public void Foo(byte[] bytes)
-{
-    var g1 = Guid.Empty;
-    var g2 = Guid.NewGuid();
-    var g3 = new Guid(bytes);
-}
+Public Sub Foo(Bytes As Byte())
+    Dim G1 As Guid = Guid.Empty
+    Dim G2 As Guid = Guid.NewGuid()
+    Dim G3 As Guid = New Guid(Bytes)
+End Sub
 </pre>
 

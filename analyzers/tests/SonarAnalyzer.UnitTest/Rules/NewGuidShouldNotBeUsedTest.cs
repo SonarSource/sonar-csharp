@@ -21,6 +21,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SonarAnalyzer.UnitTest.TestFramework;
 using CS = SonarAnalyzer.Rules.CSharp;
+using VB = SonarAnalyzer.Rules.VisualBasic;
 
 namespace SonarAnalyzer.UnitTest.Rules
 {
@@ -29,7 +30,12 @@ namespace SonarAnalyzer.UnitTest.Rules
     {
         [TestMethod]
         [TestCategory("Rule")]
-        public void NewGuidShouldNotBeUsed() =>
-            Verifier.VerifyAnalyzer(@"TestCases\NewGuidShouldNotBeUsed.cs", new CS.NewGuidShouldNotBeUsed());
+        public void Verify_CS() =>
+            Verifier.VerifyAnalyzer(@"TestCases\NewGuidShouldNotBeUsed.cs", new CS.NewGuidShouldNotBeUsed(), ParseOptionsHelper.FromCSharp8);
+
+        [TestMethod]
+        [TestCategory("Rule")]
+        public void Verify_VB() =>
+            Verifier.VerifyAnalyzer(@"TestCases\NewGuidShouldNotBeUsed.vb", new VB.NewGuidShouldNotBeUsed());
     }
 }

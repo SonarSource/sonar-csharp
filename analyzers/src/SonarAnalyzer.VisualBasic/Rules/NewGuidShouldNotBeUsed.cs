@@ -18,20 +18,22 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-namespace SonarAnalyzer.Helpers.Facade
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using SonarAnalyzer.Common;
+using SonarAnalyzer.Helpers;
+
+namespace SonarAnalyzer.Rules.VisualBasic
 {
-    public interface ISyntaxKindFacade<TSyntaxKind>
-        where TSyntaxKind : struct
+    [DiagnosticAnalyzer(LanguageNames.VisualBasic)]
+    [Rule(DiagnosticId)]
+    public sealed class NewGuidShouldNotBeUsed : NewGuidShouldNotBeUsedBase<SyntaxKind>
     {
-        abstract TSyntaxKind InvocationExpression { get; }
-        abstract TSyntaxKind[] ObjectCreationExpressions { get; }
-        abstract TSyntaxKind[] ClassAndRecordDeclaration { get; }
-        abstract TSyntaxKind EnumDeclaration { get; }
-        abstract TSyntaxKind SimpleMemberAccessExpression { get; }
-        abstract TSyntaxKind Attribute { get; }
-        abstract TSyntaxKind IdentifierName { get; }
-        abstract TSyntaxKind StringLiteralExpression { get; }
-        abstract TSyntaxKind InterpolatedStringExpression { get; }
-        abstract TSyntaxKind DefaultExpression { get; }
+        protected override ILanguageFacade<SyntaxKind> Language => VisualBasicFacade.Instance;
+
+        protected override int ConstructorArgumentListCount(SyntaxNode node) =>
+            ((ObjectCreationExpressionSyntax)node).ArgumentList?.Arguments.Count ?? 0;
     }
 }
