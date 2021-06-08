@@ -25,7 +25,6 @@ using SonarAnalyzer.Helpers;
 
 namespace SonarAnalyzer.Rules
 {
-    [Rule(DiagnosticId)]
     public abstract class NewGuidShouldNotBeUsedBase<TSyntaxKind> : SonarDiagnosticAnalyzer
         where TSyntaxKind : struct
     {
