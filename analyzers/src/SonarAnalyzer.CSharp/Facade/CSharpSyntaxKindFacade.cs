@@ -26,6 +26,7 @@ namespace SonarAnalyzer.Helpers.Facade
     internal sealed class CSharpSyntaxKindFacade : ISyntaxKindFacade<SyntaxKind>
     {
         public SyntaxKind InvocationExpression => SyntaxKind.InvocationExpression;
+        public SyntaxKind[] MethodDeclarations => new[] { SyntaxKind.MethodDeclaration };
         public SyntaxKind[] ObjectCreationExpressions => new[] {SyntaxKind.ObjectCreationExpression, SyntaxKindEx.ImplicitObjectCreationExpression};
         public SyntaxKind[] ClassAndRecordDeclaration => new[] {SyntaxKind.ClassDeclaration, SyntaxKindEx.RecordDeclaration};
         public SyntaxKind[] TypeDeclaration => new[]
