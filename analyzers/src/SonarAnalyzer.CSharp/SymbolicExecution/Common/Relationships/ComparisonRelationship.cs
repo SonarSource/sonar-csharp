@@ -21,7 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SonarAnalyzer.SymbolicExecution.SymbolicValues;
+using SonarAnalyzer.Helpers;
+using ComparisonKind = SonarAnalyzer.SymbolicExecution.SymbolicValues.ComparisonKind;
 
 namespace SonarAnalyzer.SymbolicExecution.Relationships
 {
@@ -36,7 +37,7 @@ namespace SonarAnalyzer.SymbolicExecution.Relationships
         {
             ComparisonKind = comparisonKind;
 
-            this.hash = new Lazy<int>(() =>
+            hash = new Lazy<int>(() =>
             {
                 var h = 19;
                 h = h * 31 + ComparisonKind.GetHashCode();
@@ -186,12 +187,7 @@ namespace SonarAnalyzer.SymbolicExecution.Relationships
         }
 
         public override string ToString()
-        {
-            var op = ComparisonKind == ComparisonKind.Less
-                ? "<"
-                : "<=";
-            return $"{op}({LeftOperand}, {RightOperand})";
-        }
+            => $"{(ComparisonKind == ComparisonKind.Less ? "<" : "<=")}({LeftOperand}, {RightOperand})";
 
         public override bool Equals(object obj)
         {

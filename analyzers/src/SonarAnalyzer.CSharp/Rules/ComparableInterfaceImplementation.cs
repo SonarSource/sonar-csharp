@@ -50,27 +50,7 @@ namespace SonarAnalyzer.Rules.CSharp
                 KnownType.System_IComparable,
                 KnownType.System_IComparable_T
             );
-
-        private static readonly IList<string> RequiredOperators = new List<string>
-        {
-            "op_LessThan",
-            "op_GreaterThan",
-            "op_LessThanOrEqual",
-            "op_GreaterThanOrEqual",
-            "op_Equality",
-            "op_Inequality"
-        };
-
-        private static readonly IDictionary<string, string> OperatorNamesMap = new Dictionary<string, string>
-        {
-            { "op_LessThan", "<" },
-            { "op_GreaterThan", ">" },
-            { "op_LessThanOrEqual", "<=" },
-            { "op_GreaterThanOrEqual", ">=" },
-            { "op_Equality", "==" },
-            { "op_Inequality" , "!=" },
-        };
-
+                
         protected override void Initialize(SonarAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionInNonGenerated(
@@ -116,14 +96,12 @@ namespace SonarAnalyzer.Rules.CSharp
                 SyntaxKind.StructDeclaration);
         }
 
-        private static IEnumerable<string> GetImplementedComparableInterfaces(INamedTypeSymbol classSymbol)
-        {
-            return classSymbol
-                .Interfaces
-                .Where(i => i.OriginalDefinition.IsAny(ComparableInterfaces))
-                .Select(GetClassNameOnly)
-                .ToList();
-        }
+        private static IEnumerable<string> GetImplementedComparableInterfaces(INamedTypeSymbol classSymbol) =>
+            classSymbol
+            .Interfaces
+            .Where(i => i.OriginalDefinition.IsAny(ComparableInterfaces))
+            .Select(GetClassNameOnly)
+            .ToList();
 
         private static string GetClassNameOnly(INamedTypeSymbol typeSymbol)
         {
@@ -143,11 +121,11 @@ namespace SonarAnalyzer.Rules.CSharp
 
             var overridenOperators = methods
                 .Where(m => m.MethodKind == MethodKind.UserDefinedOperator)
-                .Select(m => m.Name);
+                .Select(m => m.ComparisonKind());
 
-            foreach (var op in RequiredOperators.Except(overridenOperators))
+            foreach (var comparisonKind in ComparisonKinds.All.Except(overridenOperators))
             {
-                yield return OperatorNamesMap[op];
+                yield return comparisonKind.CSharp();
             }
         }
     }

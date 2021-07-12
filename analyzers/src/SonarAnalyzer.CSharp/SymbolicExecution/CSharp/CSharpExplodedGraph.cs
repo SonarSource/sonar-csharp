@@ -33,7 +33,7 @@ using SonarAnalyzer.Rules.CSharp;
 using SonarAnalyzer.SymbolicExecution.Constraints;
 using SonarAnalyzer.SymbolicExecution.SymbolicValues;
 using StyleCop.Analyzers.Lightup;
-
+using ComparisonKind = SonarAnalyzer.SymbolicExecution.SymbolicValues.ComparisonKind;
 namespace SonarAnalyzer.SymbolicExecution
 {
     internal class CSharpExplodedGraph : AbstractExplodedGraph
@@ -1337,21 +1337,15 @@ namespace SonarAnalyzer.SymbolicExecution
                    parent is YieldStatementSyntax;
         }
 
-        private static bool IsEmptyNullableCtorCall(IMethodSymbol nullableConstructorCall)
-        {
-            return nullableConstructorCall != null &&
-                nullableConstructorCall.MethodKind == MethodKind.Constructor &&
-                nullableConstructorCall.ReceiverType.OriginalDefinition.Is(KnownType.System_Nullable_T) &&
-                nullableConstructorCall.Parameters.Length == 0;
-        }
+        private static bool IsEmptyNullableCtorCall(IMethodSymbol nullableConstructorCall) =>
+            nullableConstructorCall != null
+            && nullableConstructorCall.MethodKind == MethodKind.Constructor
+            && nullableConstructorCall.ReceiverType.OriginalDefinition.Is(KnownType.System_Nullable_T)
+            && nullableConstructorCall.Parameters.Length == 0;
 
-        protected override Block GetForEachExitBlock(Block block)
-        {
-            if (block is BinaryBranchBlock branchBlock && branchBlock.BranchingNode.Kind() is SyntaxKind.ForEachStatement)
-            {
-                return branchBlock.FalseSuccessorBlock;
-            }
-            return null;
-        }
+        protected override Block GetForEachExitBlock(Block block) =>
+            block is BinaryBranchBlock branchBlock && branchBlock.BranchingNode.Kind() is SyntaxKind.ForEachStatement
+            ? branchBlock.FalseSuccessorBlock
+            : null;
     }
 }

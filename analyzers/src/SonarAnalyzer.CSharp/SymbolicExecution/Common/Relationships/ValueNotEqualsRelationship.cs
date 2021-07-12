@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SonarAnalyzer.Helpers;
 using SonarAnalyzer.SymbolicExecution.SymbolicValues;
+using ComparisonKind = SonarAnalyzer.SymbolicExecution.SymbolicValues.ComparisonKind;
 
 namespace SonarAnalyzer.SymbolicExecution.Relationships
 {
