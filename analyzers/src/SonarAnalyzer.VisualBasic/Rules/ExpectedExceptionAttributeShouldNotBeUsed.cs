@@ -19,17 +19,17 @@
  */
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic;
 using SonarAnalyzer.Common;
 using SonarAnalyzer.Helpers;
 
-namespace SonarAnalyzer.Rules.CSharp
+namespace SonarAnalyzer.Rules.VisualBasic
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [DiagnosticAnalyzer(LanguageNames.VisualBasic)]
     [Rule(DiagnosticId)]
     public sealed class ExpectedExceptionAttributeShouldNotBeUsed : ExpectedExceptionShouldNotBeUsedAttributeBase<SyntaxKind>
     {
-        protected override ILanguageFacade<SyntaxKind> Language => CSharpFacade.Instance;
+        protected override ILanguageFacade<SyntaxKind> Language => VisualBasicFacade.Instance;
     }
 }
