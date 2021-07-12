@@ -20,12 +20,12 @@
 
 namespace SonarAnalyzer.Helpers
 {
-    public enum CountComparisonKind
+    public enum CountComparisonResult
     {
         None,
         SizeDepedendent,
-        Any,
-        NotAny,
+        NotEmpty,
+        Empty,
         AlwaysFalse,
         AlwaysTrue,
     }
