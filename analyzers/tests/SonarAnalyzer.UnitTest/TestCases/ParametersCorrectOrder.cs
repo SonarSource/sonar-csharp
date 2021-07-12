@@ -193,4 +193,65 @@ namespace Tests.Diagnostics
             double doTheThing(int divisor, int dividend) => divide(dividend, divisor);  // Noncompliant
         }
     }
+
+    // See https://github.com/SonarSource/sonar-dotnet/issues/3879
+    class NotOnlyNullableParam
+    {
+        internal class A
+        {
+            public C Something { get; set; }
+        }
+
+        internal class C
+        {
+            public int b { get; set; }
+        }
+
+        void NotNullableParamVoid(int a, int b) // Secondary [D,E,F,G,H,I]
+        {
+            // Do nothing
+        }
+
+        void NullableParamValueVoid(int a, Nullable<int> b)
+        {
+            if (b.HasValue)
+            {
+                NotNullableParamVoid(b.Value, a); // Noncompliant [D]
+                NotNullableParamVoid(a, b.Value); // Compliant
+            }
+        }
+
+        void NullableParamCastVoid(int a, Nullable<int> b)
+        {
+            if (b.HasValue)
+            {
+                NotNullableParamVoid((int)b, a); // Noncompliant [E]
+                NotNullableParamVoid(a, (int)b); // Compliant
+            }
+        }
+
+        void InnerPropertyParamVoid(int a, A c)
+        {
+            NotNullableParamVoid(c.Something.b, a); // Noncompliant [F]
+            NotNullableParamVoid(a, c.Something.b); // Compliant
+        }
+
+        void ObjectParamCastVoid(int a, object b)
+        {
+            NotNullableParamVoid((int)b, a); // Noncompliant [G]
+            NotNullableParamVoid(a, (int)b); // Compliant
+        }
+
+        void ObjectParamNullableCastVoid(int a, object b)
+        {
+            NotNullableParamVoid(((int?)b).Value, a); // Noncompliant [H]
+            NotNullableParamVoid(a, ((int?)b).Value); // Compliant
+        }
+
+        void DifferentCaseParamsVoid(int a, int B)
+        {
+            NotNullableParamVoid(B, a); // Noncompliant [I]
+            NotNullableParamVoid(a, B); // Compliant
+        }
+    }
 }

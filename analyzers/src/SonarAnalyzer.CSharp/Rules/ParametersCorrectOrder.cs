@@ -35,6 +35,7 @@ namespace SonarAnalyzer.Rules.CSharp
     {
         private static readonly DiagnosticDescriptor rule =
             DiagnosticDescriptorBuilder.GetDescriptor(DiagnosticId, MessageFormat, RspecStrings.ResourceManager);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(rule);
 
         protected override void Initialize(SonarAnalysisContext context)
@@ -87,10 +88,24 @@ namespace SonarAnalyzer.Rules.CSharp
         protected override Location GetMethodDeclarationIdentifierLocation(SyntaxNode syntaxNode) =>
             (syntaxNode as BaseMethodDeclarationSyntax)?.FindIdentifierLocation();
 
-        protected override SyntaxToken? GetArgumentIdentifier(ArgumentSyntax argument) =>
-            (argument.Expression as IdentifierNameSyntax)?.Identifier;
+        protected override SyntaxToken? GetArgumentIdentifier(ArgumentSyntax argument) => GetExpressionSyntaxIdentifier(argument?.Expression);
 
         protected override SyntaxToken? GetNameColonArgumentIdentifier(ArgumentSyntax argument) =>
             argument.NameColon?.Name.Identifier;
+
+        private static SyntaxToken? GetExpressionSyntaxIdentifier(ExpressionSyntax expression) =>
+            expression switch
+            {
+                IdentifierNameSyntax identifier => identifier.Identifier,
+                MemberAccessExpressionSyntax memberAccess => GetValueAccessIdentifier(memberAccess),
+                CastExpressionSyntax cast => GetExpressionSyntaxIdentifier(cast.Expression),
+                ParenthesizedExpressionSyntax parentheses => GetExpressionSyntaxIdentifier(parentheses.Expression),
+                _ => null
+            };
+
+        private static SyntaxToken? GetValueAccessIdentifier(MemberAccessExpressionSyntax expression) =>
+            expression.Name.ToString() == "Value"
+                ? GetExpressionSyntaxIdentifier(expression.Expression)
+                : expression.Name.Identifier;
     }
 }
